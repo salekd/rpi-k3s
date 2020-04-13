@@ -1,0 +1,13 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://192.168.2.135:31112
+functions:
+  faas-rpi-led:
+    lang: python3-armhf
+    handler: ./faas-rpi-led
+    image: salekd/faas-rpi-led:0.0.1
+    labels:
+      com.openfaas.scale.min: 2
+      com.openfaas.scale.max: 2
+
