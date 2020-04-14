@@ -1,4 +1,4 @@
-# Raspberry Pi Kubernetes cluster
+# Raspberry Pi Kubernetes cluster with OpenFaaS function to turn on LED
 
 This repository describes the installation of a 2-node Raspberry Pi Kubernetes cluster using **k3s** - Kubernetes distribution built for IoT & Edge computing.
 Kubernetes dashboard and **OpenFaaS** are deployed using **Arkade**. An OpenFaaS function to turn on an LED light is deployed in two replicas, one on each node, and is used to demonstrate load balancing in action.
