@@ -1,5 +1,8 @@
 # Raspberry Pi Kubernetes cluster
 
+This repository describes the installation of a 2-node Raspberry Pi Kubernetes cluster using **k3s** - Kubernetes distribution built for IoT & Edge computing.
+Kubernetes dashboard and **OpenFaaS** are deployed using **Arkade**. An OpenFaaS function to turn on LED lights is used to demonstrate load balancing in action.
+
 https://medium.com/@alexellisuk/walk-through-install-kubernetes-to-your-raspberry-pi-in-15-minutes-84a8492dc95a
 
 https://blog.alexellis.io/test-drive-k3s-on-raspberry-pi/
@@ -7,6 +10,8 @@ https://blog.alexellis.io/test-drive-k3s-on-raspberry-pi/
 https://k3s.io/
 
 https://rancher.com/docs/k3s/latest/en/quick-start/
+
+![Raspberry Pi k3s cluster](rpi-k3s.jpg)
 
 # Network configuration
 
@@ -106,6 +111,10 @@ kubectl get pods --all-namespaces
 
 # Install applications
 
+Use Arkade to install applications on the k3s cluster.
+
+https://github.com/alexellis/arkade
+
 ```
 curl -sSL https://dl.get-arkade.dev | sudo sh
 
@@ -162,7 +171,13 @@ echo -n k3s | faas-cli invoke figlet
 curl http://192.168.2.135:31112/function/figlet -d "k3s"
 ```
 
-# LED
+# OpenFaaS function to turn on LED
+
+A simple OpenFaaS function that turns on an LED light on the Raspberry Pi can be found in the repository.
+
+This function is deployed in two instances, one on each k3s node.
+Every time the function is invoked, an LED light blinks on the node where the function is deployed.
+In this way, we can see load balancing in action!
 
 ```
 export USERNAME=salekd
@@ -177,6 +192,8 @@ faas-cli push -f faas-rpi-led.yml
 faas-cli deploy -f faas-rpi-led.yml
 ```
 
+Running in a privileged mode is required for accessing GPIO pins.
+
 ```
 kubectl edit deployment/faas-rpi-led -n openfaas-fn
 ```
@@ -185,6 +202,8 @@ kubectl edit deployment/faas-rpi-led -n openfaas-fn
     securityContext:
       privileged: True
 ```
+
+Test load balancing by continuously invoking the function in parallel.
 
 ```
 curl http://192.168.2.135:31112/function/faas-rpi-led
